@@ -1,46 +1,59 @@
+'''회의실 배정
+시간 제한	메모리 제한	제출	정답	맞은 사람	정답 비율
+2 초	128 MB	70398	20554	14956	28.674%
+문제
+한 개의 회의실이 있는데 이를 사용하고자 하는 N개의 회의에 대하여 회의실 사용표를 만들려고 한다. 
+각 회의 I에 대해 시작시간과 끝나는 시간이 주어져 있고, 
+각 회의가 겹치지 않게 하면서 회의실을 사용할 수 있는 회의의 최대 개수를 찾아보자. 
+단, 회의는 한번 시작하면 중간에 중단될 수 없으며 한 회의가 끝나는 것과 동시에 다음 회의가 시작될 수 있다. 
+회의의 시작시간과 끝나는 시간이 같을 수도 있다. 이 경우에는 시작하자마자 끝나는 것으로 생각하면 된다.
+
+입력
+첫째 줄에 회의의 수 N(1 ≤ N ≤ 100,000)이 주어진다. 
+둘째 줄부터 N+1 줄까지 각 회의의 정보가 주어지는데 
+이것은 공백을 사이에 두고 회의의 시작시간과 끝나는 시간이 주어진다. 
+시작 시간과 끝나는 시간은 231-1보다 작거나 같은 자연수 또는 0이다.
+
+출력
+첫째 줄에 최대 사용할 수 있는 회의의 최대 개수를 출력한다.
+
+예제 입력 1 
+11
+1 4
+3 5
+0 6
+5 7
+3 8
+5 9
+6 10
+8 11
+8 12
+2 13
+12 14
+예제 출력 1 
+4
+힌트
+(1,4), (5,7), (8,11), (12,14) 를 이용할 수 있다.
+'''
+
 n = int(input())
-data = []
-for i in range(n):
-    data.append(tuple(map(int,input().split())))
+conf = []
+for _ in range(n):
+    conf.append(list(map(int,input().split())))
 
-adata = sorted(data)
-print(adata)
-maxcnt = 0
-for i in reversed(range(n)):
-    cnt = 0
-    next = 0
+conf = sorted(conf,key = lambda x : x[1])
+for i in range(n - 1):
+    if conf[i][1] == conf[i+1][1]:
+        sortstart = i 
+        sortend = i
 
-    index = n - i - 1
-    end = n - 1
-    next = adata[n - i -1][1]
-    cnt += 1
+        conf = conf[:sortstart] + sorted(conf[sortstart:sortend]) + conf[sortend:]
 
-    while(next > adata[n - 1][1]):
-        flag = False
-        start = index
-        end = n - 1
-        while start < end:
-            mid = (start + end) // 2
-            if adata[mid][0] == next:
-                index = mid
-                flag = True
-            elif adata[mid][0] < next:
-                start = mid + 1
-            else:
-                end = mid -1
-        if flag == False:
-            if adata[mid][0] > next:
-                index = mid - 1
-            elif adata[mid][0] < next:
-                index = mid + 1
-        next = adata[index][1]
-        cnt += 1
+result = 1
+pick = conf[0]
+for compared in conf[1:]:
+    if compared[0] >= pick[1]:
+        result += 1
+        pick = compared
 
-    if maxcnt < cnt:
-        maxcnt = cnt
-
-print(maxcnt)
-
-
-
-
+print(result)

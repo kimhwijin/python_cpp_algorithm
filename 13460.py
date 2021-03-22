@@ -9,7 +9,7 @@ for _ in range(n):
 
 red = []
 blue = []
-goal = []
+goal = []   
 for nn in range(n):
     for mm in range(m):
         if graph[nn][mm] == 'R':
