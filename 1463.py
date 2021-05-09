@@ -10,6 +10,7 @@ if n < 4:
 cnt[1] = 0
 cnt[2] = 1
 cnt[3] = 1
+
 for i in range(4, n+1):
     minval = i
     if i % 3 == 0:

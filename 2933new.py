@@ -89,6 +89,7 @@ flag = [False]
 stick_cnt = int(input())
 stick = list(map(int,input().split()))
 move = [(1,0),(-1,0),(0,1),(0,-1)]
+
 from collections import deque
 queue = deque()
 
