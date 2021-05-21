@@ -1,4 +1,5 @@
 answer = ''
+
 def split(w):
     u = ''
     v = ''
