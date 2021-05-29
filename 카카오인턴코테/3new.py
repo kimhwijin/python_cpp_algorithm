@@ -29,7 +29,7 @@ def solution(n, k, cmd):
     answer = ''.join(alist)
     return answer
 
-n = 8
+n = 15
 k = 7
 cmd = ["C","C","C","C","C","C","C","C","Z"]
 print(solution(n,k,cmd))
