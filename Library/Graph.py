@@ -14,6 +14,7 @@
     5     6
 '''
 from collections import deque
+#tree를 dict 형태로 graph[부모노드] = list of 자식노드 형태로 저장한다.
 graph = {}
 start_node = 10
 graph[10] = [4,9]
