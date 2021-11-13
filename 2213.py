@@ -39,25 +39,45 @@
 140
 1 3 5 7
 '''
+'''
+파라미터 설명
+n : 트리 노드의 수
+edge : 희소 행렬로 edge[i] -> 노드 i 와 연결된 노드의 리스트
+weight : 엣지의 가중치 행렬, weight[i] -> 입력된 i 번째 edge의 가중치
+path : 최대 가중치를 얻기 위해 지나온 노드
+dp : 최대 가중치의 값
+dp[i][0] : i번째 노드 자신을 포함한 서브트리 전체의 독립집합 가중치 최대
+dp[i][1] : i번째 노드 자신을 제외한 서브트리 전체의 독립집합 가중치 최대
 
-import sys
-input = sys.stdin.readline
-n = int(input())
-weight = [0] + list(map(int, input().split()))
-edge = [[] for _ in range(n + 1)]
-dp = [[weight[i], 0] for i in range(n + 1)]
-visit = [False for _ in range(n + 1)]
-path = [[[i], []] for i in range(n + 1)]
+목표 : 트리 처음부터 마지막 노드까지 가중치 최대
+방식 : 
+- 1번 노트부터 탐색을 시작해서 dfs방식으로 재귀적으로 리프노드까지 도달한다.
+- 리프노드에서는 자신을 포함하지 않으면 0, 포함하면 자신의 가중치를 가진다. (초기에 지정해둔 상태)
+- 리프노드가 아닌곳에서는 자신과 자식으로 연결된 노드들의 재귀적으로 최대 가중치를 찾아 dp에 지정해둔 상태에서
+- 현재 노드를 포함한 경우와 아닌경우를 나누어서 자식 노드들의 dp를 더해가면서 최대값을 저장한다.
+- 각 경우에 맞춰서 경로를 추가해준다.
+- 이런 방식으로 최상단 1번 노드까지 도달한 후, 최대 가중치 값과 그에맞는 정렬된 경로를 반환한다.
 
-for i in range(n - 1):
-    a, b = map(int, input().split())
-    edge[a].append(b)
-    edge[b].append(a)
+'''
 
 
-#dp[1][0] : 자신을 제외한 트리 처음부터 마지막 노드까지 가중치 최대
-#dp[1][1] : 자신을 포함한 트리 처음부터 마지막 노드까지 가중치 최대
-#목표 : 트리 처음부터 마지막 노드까지 가중치 최대
+#python 2213.py --test 일 테스트 케이스 수행
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--test', dest='accumulate', action='store_const',
+                    const=True, default=False)
+
+args = parser.parse_args()
+test = args.accumulate
+
+def print_test_case(n, weight, input_edge):
+
+    print("n : ", n)
+    print("weights: ", *weight[1:])
+    print("edges : ")
+    for a, b in input_edge:
+        print(a, b)
+    print()
 
 
 def tree_dfs(start):
@@ -77,10 +97,65 @@ def tree_dfs(start):
             #최대값에 맞는 경로를 더해줌
             path[start][1] += path[node][1] if dp[node][0] < dp[node][1] else path[node][0]
 
+#데이터 입력
+if not test:
+    import sys
+    input = sys.stdin.readline
+    n = int(input())
+    weight = [0] + list(map(int, input().split()))
+    edge = [[] for _ in range(n + 1)]
+    dp = [[weight[i], 0] for i in range(n + 1)]
+    visit = [False for _ in range(n + 1)]
+    path = [[[i], []] for i in range(n + 1)]
 
-edge[0].append(1)
-tree_dfs(0)
-print(dp[0][1])
-path[0][1].sort()
-print(*path[0][1])
+    for i in range(n - 1):
+        a, b = map(int, input().split())
+        edge[a].append(b)
+        edge[b].append(a)
+    
+    edge[0].append(1)
+    tree_dfs(0)
+    print(dp[0][1])
+    path[0][1].sort()
+    print(*path[0][1])
+
+#테스트 케이스 수행
+else:
+    import random
+    random.seed(42)
+
+    iter_n = [random.randrange(7, 90) for _ in range(5)]
+    iter_weight = []
+    iter_edge = []
+    for i in iter_n:
+        iter_weight.append([0] + [random.randrange(1,6) for _ in range(i)])
+        temp_edges = []
+        for j in range(i-1):
+            while True:
+                a = j
+                b = random.randrange(1, i+1)
+                if a != b:
+                    if not [a,b] in temp_edges:
+                        temp_edges.append([a,b])
+                        break
+        iter_edge.append(temp_edges)
+    
+
+    for i, [n, weight, input_edge] in enumerate(zip(iter_n, iter_weight, iter_edge)):
+        print();print("test",i+1, "-"*30)
+        print_test_case(n, weight, input_edge)
+        edge = [[] for _ in range(n + 1)]
+        dp = [[weight[i], 0] for i in range(n + 1)]
+        visit = [False for _ in range(n + 1)]
+        path = [[[i], []] for i in range(n + 1)]
+        for a, b in input_edge:
+            edge[a].append(b)
+            edge[b].append(a)
+
+        edge[0].append(1)
+        tree_dfs(0)
+        print(dp[0][1])
+        path[0][1].sort()
+        print(*path[0][1])
+
 
